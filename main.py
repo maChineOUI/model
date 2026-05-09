@@ -30,14 +30,16 @@ def parse_args():
 
 
 def print_summary(scheme, Nx, Nt, T, alpha, ic, r):
+    dt = T / Nt
+    explicit_limit = 0.5 - alpha * dt / 4.0
     print(f"\n{'='*50}")
     print(f"  PDE Solver: u_t = u_xx - {alpha}*u")
     print(f"  Scheme:     {scheme}")
     print(f"  Grid:       Nx={Nx}, Nt={Nt}, T={T}")
     print(f"  IC:         {ic}")
     print(f"  r = dt/dx²: {r:.4f}")
-    if scheme == "explicit" and r > 0.5:
-        print(f"  *** UNSTABLE: r={r:.4f} > 0.5 ***")
+    if scheme == "explicit" and r > explicit_limit:
+        print(f"  *** UNSTABLE: r={r:.4f} > {explicit_limit:.4f} ***")
     print(f"{'='*50}\n")
 
 
@@ -49,8 +51,15 @@ def run_single(args):
     U_final, history = result
     print_summary(args.scheme, args.Nx, args.Nt, args.T, args.alpha, args.initial, r)
 
-    fig = plot_snapshots(history, x_interior, dt,
-                         title=f"{args.scheme} | IC={args.initial} | α={args.alpha}")
+    fig = plot_snapshots(
+        history,
+        x_interior,
+        dt,
+        title=(
+            f"{args.scheme} | IC={args.initial} | α={args.alpha} | "
+            f"Nx={args.Nx}, Nt={args.Nt}, r={r:.3f}"
+        ),
+    )
     path = f"{args.save_prefix}_{args.scheme}_{args.initial}.png"
     fig.savefig(path, dpi=150)
     print(f"Saved: {path}")
@@ -60,7 +69,7 @@ def run_single(args):
         fig_v = plot_validation(history, x_interior, dt, args.alpha,
                                 initial_condition=args.initial,
                                 title=f"Validation — {args.scheme} | IC={args.initial}")
-        path_v = f"{args.save_prefix}_{args.scheme}_validation.png"
+        path_v = f"{args.save_prefix}_{args.scheme}_validation_{args.initial}.png"
         fig_v.savefig(path_v, dpi=150)
         print(f"Saved: {path_v}")
         plt.close(fig_v)
@@ -86,9 +95,15 @@ def run_comparison(args):
         print_summary(scheme, args.Nx, args.Nt, args.T, args.alpha, args.initial, r)
         results[scheme] = result  # (U_final, history)
 
-    fig = plot_scheme_comparison(results, x_interior, dt, args.alpha,
-                                 args.initial,
-                                 save_path=f"{args.save_prefix}_compare_{args.initial}.png")
+    fig = plot_scheme_comparison(
+        results,
+        x_interior,
+        dt,
+        args.alpha,
+        args.initial,
+        params=f"Nx={args.Nx}, Nt={args.Nt}, T={args.T}, r={r:.3f}",
+        save_path=f"{args.save_prefix}_compare_{args.initial}.png",
+    )
     print(f"Saved: {args.save_prefix}_compare_{args.initial}.png")
     plt.close(fig)
 

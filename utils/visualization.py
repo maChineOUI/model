@@ -30,7 +30,7 @@ def plot_snapshots(history, x_interior, dt, title, snapshot_steps=None, ax=None)
 
 
 def plot_scheme_comparison(results, x_interior, dt, alpha, initial_condition,
-                           snapshot_steps=None, save_path=None):
+                           snapshot_steps=None, params=None, save_path=None):
     schemes = list(results.keys())
     Nt = len(next(iter(results.values()))[1]) - 1
 
@@ -66,7 +66,10 @@ def plot_scheme_comparison(results, x_interior, dt, alpha, initial_condition,
             if row == n_times - 1:
                 ax.set_xlabel("x")
 
-    fig.suptitle(f"Scheme comparison — IC={initial_condition}, α={alpha}", fontsize=11)
+    title = f"Scheme comparison — IC={initial_condition}, α={alpha}"
+    if params:
+        title += f" — {params}"
+    fig.suptitle(title, fontsize=11)
     plt.tight_layout()
     if save_path:
         plt.savefig(save_path, dpi=150)

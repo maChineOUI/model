@@ -10,8 +10,12 @@ def step_explicit(U, r, alpha, dt):
 
 
 def solve_explicit(U0, Nx, Nt, r, alpha, dt, store_all=False):
-    if r > 0.5:
-        print(f"Warning: stability condition violated (r={r:.4f} > 0.5)")
+    stability_limit = 0.5 - alpha * dt / 4.0
+    if r > stability_limit:
+        print(
+            "Warning: stability condition violated "
+            f"(r={r:.4f} > {stability_limit:.4f})"
+        )
 
     U = U0.copy()
     history = [U.copy()] if store_all else None
@@ -22,6 +26,7 @@ def solve_explicit(U0, Nx, Nt, r, alpha, dt, store_all=False):
         if not np.all(np.isfinite(U)):
             print(f"  FTCS diverged at step {step + 1} (NaN/Inf detected), stopping early.")
             if store_all:
+                history.append(U.copy())
                 nan_frame = np.full(Nx, np.nan)
                 history.extend([nan_frame] * (Nt - step - 1))
             break
