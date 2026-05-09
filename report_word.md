@@ -60,7 +60,7 @@ We study the numerical solution of the linear reaction-diffusion equation
 
 $$u_t = u_{xx} - \alpha\, u, \quad x \in (0,1),\; t > 0,$$
 
-subject to homogeneous Dirichlet boundary conditions and two distinct initial profiles. Three finite-difference schemes are implemented and compared: the explicit Forward-Time Centred-Space (FTCS) method, the implicit Backward-Time Centred-Space (BTCS) method, and the Crank-Nicolson (CN) scheme. Stability is analysed via von Neumann's method; accuracy is verified against the closed-form solution for `f1` and the Fourier-series solution for `f2`. Theoretical consistency gives O(dt + dx²) for FTCS and BTCS and O(dt² + dx²) for CN. The experiments confirm second-order spatial convergence for all schemes and the expected temporal orders for BTCS and CN, while also illustrating the qualitative difference between the conditionally stable explicit scheme and the unconditionally stable implicit schemes.
+subject to homogeneous Dirichlet boundary conditions and two distinct initial profiles. Three finite-difference schemes are implemented and compared: the explicit Forward-Time Centred-Space (FTCS) method, the implicit Backward-Time Centred-Space (BTCS) method, and the Crank-Nicolson (CN) scheme. Stability is analysed via von Neumann's method; accuracy is verified against the closed-form solution for `f1` and the Fourier-series solution for `f2`. Theoretical consistency gives O(dt + dx²) for FTCS and BTCS and O(dt² + dx²) for CN. The reported convergence tables are consistent with second-order spatial convergence for all schemes and the expected temporal orders for BTCS and CN, while also illustrating the qualitative difference between the conditionally stable explicit scheme and the unconditionally stable implicit schemes.
 
 ---
 
@@ -103,7 +103,7 @@ Hence the exact solution is
 
 $${u(x,t) = e^{-(4\pi^2 + \alpha)\,t} \sin(2\pi x).} \tag{5}$$
 
-The solution decays exponentially at rate $4\pi^2 + \alpha \approx 39.5 + \alpha$. Larger $\alpha$ accelerates amplitude decay without altering the spatial shape. This is a key insight: the reaction term does **not** couple spatial modes — it only amplifies the natural exponential decay already present from diffusion.
+The solution decays exponentially at rate $4\pi^2 + \alpha \approx 39.5 + \alpha$. Larger $\alpha$ accelerates amplitude decay without altering the spatial shape. The reaction term does **not** couple spatial modes; it only adds the decay rate $\alpha$.
 
 ### 1.3 Behaviour for f2
 
@@ -146,7 +146,7 @@ $$u(x,t) = \frac{8}{\pi^2}\sum_{k=0}^{\infty} \frac{(-1)^k}{(2k+1)^2}\,e^{-((2k+
 
 In practice the series is truncated at $K \approx 50$ terms, since the amplitude of mode $n = 2k+1$ decays as $(2k+1)^{-2}$ and the exponential suppresses high modes rapidly for $t > 0$.
 
-**Qualitative behaviour.** The $k=0$ (fundamental) mode $\sin(\pi x)$ has the slowest decay rate $\pi^2 + \alpha \approx 9.87 + \alpha$; all higher modes decay at least $9\times$ faster. By $t \approx 0.1$ the solution is already dominated by $\sin(\pi x)$ regardless of the initial shape. The discontinuity in the first derivative of `f2` at $x = 1/2$ slows the decay of Fourier coefficients and makes early-time smoothing more visible on coarse grids, which is a useful test of the schemes' robustness.
+**Qualitative behaviour.** The $k=0$ (fundamental) mode $\sin(\pi x)$ has the slowest decay rate $\pi^2 + \alpha \approx 9.87 + \alpha$; all higher modes decay at least $9\times$ faster. By $t \approx 0.1$ the solution is already dominated by $\sin(\pi x)$ regardless of the initial shape. The discontinuity in the first derivative of `f2` at $x = 1/2$ slows the decay of Fourier coefficients and makes early-time smoothing more visible on coarse grids, which tests the schemes on non-smooth initial data.
 
 ---
 
@@ -176,7 +176,7 @@ All three schemes use this same spatial stencil; they differ only in which time 
 
 ### 2.3 Discrete Operator, Consistency, and Boundary Treatment
 
-It is useful to define the discrete Laplacian on the vector of interior unknowns:
+Define the discrete Laplacian on the vector of interior unknowns:
 
 $$\left(L_h U\right)_i = \frac{U_{i-1}-2U_i+U_{i+1}}{\Delta x^2}, \qquad i=1,\ldots,N_x, \tag{17}$$
 
@@ -405,11 +405,11 @@ The main comparison figures use the same stable grid for both initial conditions
 ![](output_compare_f2.png)
 *Figure 2. Stable comparison of explicit, implicit, and Crank-Nicolson schemes for f2 with Nx=50, Nt=3000, T=0.5, alpha=1.0.*
 
-For `f1`, the sine shape is preserved while the amplitude decays at the rate $4\pi^2+\alpha$. For `f2`, diffusion rapidly smooths the tent profile and the solution becomes dominated by the fundamental $\sin(\pi x)$ mode. In both cases the numerical curves are visually indistinguishable from the exact reference at this resolution.
+For `f1`, the sine shape is preserved while the amplitude decays at the rate $4\pi^2+\alpha$. For `f2`, diffusion rapidly smooths the tent profile and the solution becomes dominated by the fundamental $\sin(\pi x)$ mode. In both cases the numerical curves are visually close to the exact reference at this resolution.
 
 ### 6.2 Validation and Instability Demonstration
 
-The Crank-Nicolson validation figure for `f1` confirms the expected agreement with the exact solution even on the coarser grid $N_x=100$, $N_t=500$.
+Figure 3 shows close agreement with the exact solution for `f1` at $N_x=100$, $N_t=500$, $T=0.5$, and $\alpha=1$.
 
 ![](output_crank-nicolson_validation_f1.png)
 *Figure 3. Crank-Nicolson validation against the exact solution for f1 with Nx=100, Nt=500, T=0.5, alpha=1.0.*
@@ -439,7 +439,7 @@ With $T=0.1$ and $N_t = 10{,}000$ (time error negligible), varying $N_x$ shows $
 | 40    | 0.02439   | 8.6e-5  | 1.1e-4  | 9.6e-5 | ≈1.99       |
 | 80    | 0.01235   | 1.4e-5  | 3.5e-5  | 2.4e-5 | ≈2.00       |
 
-At coarser grids all schemes yield nearly identical errors, confirming that for $N_t$ large enough the spatial discretisation dominates and the schemes are indistinguishable in accuracy.
+At coarser grids the errors are close; for this $N_t$, the observed rates suggest that spatial discretisation dominates.
 
 ### 6.4 Temporal Convergence
 
@@ -457,7 +457,7 @@ With $T=0.1$ and $N_x = 500$ (spatial error $\lesssim 10^{-6}$, negligible), var
 | 40    | 0.0025    | 4.20e-5 | 2.02         |
 | 80    | 0.0013    | 1.00e-5 | 2.07         |
 
-The clean rate of **2.0** confirms second-order accuracy in time for CN.
+The observed rates are close to **2.0**, as expected for CN.
 
 **BTCS** (expected O(dt)):
 
@@ -472,7 +472,7 @@ The clean rate of **2.0** confirms second-order accuracy in time for CN.
 | 80    | 0.0013    | 1.29e-3 | 1.02         |
 | 160   | 0.0006    | 6.38e-4 | 1.01         |
 
-The rate converges cleanly to **1.0**.
+The observed rates approach **1.0**.
 
 The temporal error of BTCS at $N_t = 5$ is about 35× larger than CN at the same $N_t$. To match CN's accuracy at $N_t = 10$ ($L_2 \approx 6.8 \times 10^{-4}$), BTCS needs $N_t \approx 35$, i.e., $3.5\times$ more steps.
 
@@ -492,7 +492,7 @@ The absolute errors are tiny because the exact `f1` solution has already decayed
 
 ### 6.6 Effect of $\alpha$
 
-As $\alpha$ increases, the solution decays faster but the spatial structure is unchanged (for `f1`). The numerical schemes remain accurate across the tested range:
+As $\alpha$ increases, the solution decays faster but the spatial structure is unchanged (for `f1`). CN keeps small absolute errors across the tested range:
 
 *Table 7. Effect of the reaction coefficient on CN absolute error.*
 
@@ -514,13 +514,13 @@ Larger $\alpha$ damps the solution to near-zero faster, so absolute errors also 
 
 The FTCS constraint $4r+\alpha\Delta t\le 2$ forces $\Delta t \le 2/(4/\Delta x^2+\alpha)$, which is essentially $\Delta t \lesssim \Delta x^2/2$ when $\alpha\Delta t$ is small. For a spatial resolution of $N_x = 100$ ($\Delta x \approx 0.01$), a stable FTCS simulation of $T = 0.5$ and $\alpha=1$ requires at least $N_t = 10202$ steps. BTCS and CN need only as many steps as dictated by *accuracy*, not stability — and for smooth solutions, accuracy is achieved with far fewer steps.
 
-This disparity grows as $N_x$ increases: doubling the spatial resolution quadruples the required number of FTCS steps (due to the $\Delta t \sim \Delta x^2$ constraint) while BTCS/CN may need only twice as many steps to maintain $O(\Delta t)$ accuracy. For three-dimensional problems, this advantage is even more pronounced.
+This disparity grows as $N_x$ increases: doubling the spatial resolution quadruples the required number of FTCS steps (due to the $\Delta t \sim \Delta x^2$ constraint) while BTCS/CN may need only twice as many steps to maintain $O(\Delta t)$ accuracy. This scaling already makes FTCS expensive as $N_x$ increases in the one-dimensional setting.
 
 ### 7.2 Accuracy Trade-Off Between BTCS and CN
 
 Both BTCS and CN solve one tridiagonal system per step. The extra computation in CN is building the right-hand side $B_{\text{CN}}\mathbf{u}^n$, which requires one additional $O(N_x)$ vector pass. Against this modest overhead, CN gains a full order in time accuracy.
 
-The break-even point: to achieve a target temporal error $\varepsilon$ in time $T$, BTCS requires $N_t \sim T\varepsilon^{-1}$ steps while CN needs $N_t \sim \sqrt{T\varepsilon^{-1}}$ steps. For $\varepsilon = 10^{-4}$, $T = 0.5$: BTCS needs $N_t \sim 5000$, CN needs $N_t \sim 71$. The savings factor is $\sim 70$, far outweighing the modest extra right-hand-side assembly cost. **CN is the preferred scheme for smooth solutions.**
+The break-even point: to achieve a target temporal error $\varepsilon$ in time $T$, BTCS requires $N_t \sim T\varepsilon^{-1}$ steps while CN needs $N_t \sim \sqrt{T\varepsilon^{-1}}$ steps. For $\varepsilon = 10^{-4}$, $T = 0.5$: BTCS needs $N_t \sim 5000$, CN needs $N_t \sim 71$. Under this cost model, the step-count reduction is much larger than the extra right-hand-side assembly cost. **For the smooth one-dimensional cases tested here, CN should require fewer time steps than BTCS for the same temporal error.**
 
 ### 7.3 Numerical Diffusion
 
@@ -540,29 +540,29 @@ $$\frac{1-\xi/2}{1+\xi/2} = e^{-\xi}\cdot e^{\xi^3/12 + O(\xi^5)}, \tag{49}$$
 
 so the extra damping is only $O(\Delta t^3)$ per step, accumulating to $O(\Delta t^2)$ — consistent with second-order accuracy in time. CN introduces negligible numerical diffusion for moderate $\Delta t$.
 
-**Practical consequence.** For the tent function `f2`, whose high-frequency Fourier modes carry the kink at $x=1/2$, the excess damping in BTCS causes the kink to smooth out faster than the exact solution. CN preserves the amplitude of each mode much more faithfully. This is directly visible in the comparison plots: BTCS solutions appear slightly smoother than CN solutions at the same $N_t$.
+**Consequence for `f2`.** For the tent function `f2`, whose high-frequency Fourier modes carry the kink at $x=1/2$, the excess damping in BTCS causes the kink to smooth out faster than the exact solution. CN introduces less damping in the amplification-factor expansion. In the comparison plots, BTCS solutions appear slightly smoother than CN solutions at the same $N_t$.
 
 ### 7.4 When to Use Each Scheme
 
-- **FTCS**: Instructive for learning; useful when $r \ll 1/2$ (very coarse time steps
+- **FTCS**: Instructive for learning; appropriate when $r \ll 1/2$ (very coarse time steps
 are needed anyway for accuracy, and no linear solve is needed). Can be competitive for nonlinear problems where implicit solves are expensive.
 
-- **BTCS**: Robust and simple; preferred when stability is paramount and temporal
-accuracy requirements are modest, or as an inner solver in splitting methods.
+- **BTCS**: Simple and unconditionally stable; suitable when first-order temporal
+accuracy is sufficient.
 
-- **CN**: Best overall accuracy-efficiency for smooth, well-resolved problems. Standard
-choice in production heat-equation solvers. Should be used with moderate $r$ to avoid temporal oscillations (which are stable but aesthetically undesirable).
+- **CN**: More accurate in time for smooth, well-resolved problems. Should be used
+with moderate $r$ to avoid temporal oscillations (which are stable but visually undesirable).
 
 ### 7.5 The Reaction Term
 
-A noteworthy observation: the $-\alpha u$ term does not alter the spatial modes, it only adjusts their temporal decay rate from $\lambda_k$ to $\lambda_k + \alpha$. For numerical purposes, $\alpha > 0$ has two different effects:
+The $-\alpha u$ term does not alter the spatial modes; it adjusts their temporal decay rate from $\lambda_k$ to $\lambda_k + \alpha$. For numerical purposes, $\alpha > 0$ has two different effects:
 
 - In FTCS, the amplification factor $G = 1 - 4r\sin^2(\theta/2) - \alpha\Delta t$
 shifts downward, so the exact stability condition becomes $4r+\alpha\Delta t\le 2$. Thus the reaction term slightly **tightens** the explicit time-step restriction.
 - In BTCS/CN, larger $\alpha$ increases the diagonal dominance of $A$, improving
 the conditioning of the tridiagonal system.
 
-This behaviour generalises: for parabolic PDEs with positive reaction, implicit schemes tend to become more strongly damped and often show smaller absolute errors as the reaction coefficient grows. This is the opposite of the difficulty introduced by stiff reaction terms with $\alpha < 0$ (growth) or in systems of PDEs.
+For the present linear damping term, increasing $\alpha$ strengthens damping and increases diagonal dominance in the implicit matrices. This differs from growth terms with $\alpha < 0$, which would amplify the solution instead of damping it.
 
 ### 7.6 Behaviour with f2 (Tent Function)
 
@@ -571,18 +571,18 @@ The tent function has a discontinuous first derivative at $x = 1/2$, whose Fouri
 1. Coarse grids will misrepresent the initial kink.
 2. The early-time solution shows the kink smoothing by diffusion — a physically
 meaningful phenomenon (the PDE regularises the data immediately for $t > 0$).
-3. All three schemes handle this correctly, but CN at large $\Delta t$ can produce
-visible oscillations near the kink due to the $G < 0$ effect for high wavenumbers (modes with $\mu > 1$).
+3. In the tests here, all three schemes reproduce this smoothing qualitatively, but
+CN at large $\Delta t$ can produce visible oscillations near the kink due to the $G < 0$ effect for high wavenumbers (modes with $\mu > 1$).
 
 This makes `f2` a more discriminating test than `f1` for assessing scheme behaviour near non-smooth data.
 
 ### 7.7 Algorithmic Optimisation and Possible Extensions
 
-The current implementation is deliberately simple and close to the mathematical schemes, but several practical improvements are natural if the code were extended to larger grids or repeated experiments.
+The implementation follows the mathematical schemes directly. Larger grids or repeated experiments would benefit from a few targeted changes.
 
 **Pre-computation of tridiagonal factors.** For BTCS and CN, the left-hand matrix is constant when $\Delta x$, $\Delta t$, and $\alpha$ are fixed. Therefore the Thomas forward-sweep coefficients can be computed once and reused at every time step. This is done for BTCS in `schemes/implicit.py` and for CN in `schemes/crank_nicolson.py`. This reduces the repeated linear-solve overhead while preserving exactly the same numerical method.
 
-**Memory-efficient storage.** The plotting mode stores the complete history $U^0,\ldots,U^{N_t}$, which costs $O(N_xN_t)$ memory. This is convenient for small teaching examples, but not necessary for production runs. A more scalable version would store only the current vector and a prescribed list of snapshot times, reducing the memory cost to $O(N_x)$ plus the selected output frames.
+**Memory-efficient storage.** The plotting mode stores the complete history $U^0,\ldots,U^{N_t}$, which costs $O(N_xN_t)$ memory. This is convenient for small teaching examples, but not necessary when only a few output times are needed. A more scalable version would store only the current vector and a prescribed list of snapshot times, reducing the memory cost to $O(N_x)$ plus the selected output frames.
 
 The practical effect was measured with `benchmark_optimizations.py` using $N_x=1200$, $N_t=800$, $T=0.001$, $\alpha=1$, `f2`, and median timings over five runs for the Thomas comparison. The baseline CN implementation rebuilds the Thomas coefficients at every time step; the optimised implementation pre-computes them once.
 
@@ -595,9 +595,9 @@ The practical effect was measured with `benchmark_optimizations.py` using $N_x=1
 | Runtime without vs with full history | ≈0.31 s | ≈0.31 s | No meaningful timing penalty at this size |
 | Stored solution memory | 7.33 MiB full history | 0.05 MiB for 5 snapshots | 133.5× less memory |
 
-The timing gain comes from eliminating one repeated forward-sweep coefficient pass per time step. The memory result is more important for large simulations: storing the full history is acceptable for plots in this report, but selected snapshots are the better design for large $N_x$ or $N_t$.
+The timing gain comes from eliminating one repeated forward-sweep coefficient pass per time step. The memory result matters when only a few output times are needed: selected snapshots reduce storage for large $N_x$ or $N_t$.
 
-**Automatic time-step control for FTCS.** Since the exact explicit stability condition is $4r+\alpha\Delta t\le 2$, the program can automatically reject an unstable explicit configuration or reduce $\Delta t$ before running. This would make the solver safer for parameter sweeps and prevent wasting computation on runs that are guaranteed to diverge.
+**Automatic time-step control for FTCS.** Since the exact explicit stability condition is $4r+\alpha\Delta t\le 2$, the program can automatically reject an unstable explicit configuration or reduce $\Delta t$ before running. This would avoid parameter-sweep runs that are guaranteed to diverge.
 
 **Rannacher smoothing for non-smooth data.** Crank-Nicolson is unconditionally stable but can exhibit stable sign-changing oscillations for large $\Delta t$, especially near the kink of `f2`. A common remedy is to start with one or two BTCS half-steps before switching to CN. This Rannacher smoothing damps the highest-frequency components introduced by non-smooth initial data while retaining second-order behaviour for later smooth evolution.
 
@@ -609,24 +609,24 @@ The timing gain comes from eliminating one repeated forward-sweep coefficient pa
 
 ## 8. Conclusion
 
-We implemented and validated three finite-difference schemes for the reaction-diffusion equation $u_t = u_{xx} - \alpha u$ on the unit interval. The key findings are:
+We implemented and compared three finite-difference schemes for the reaction-diffusion equation $u_t = u_{xx} - \alpha u$ on the unit interval. The main conclusions are:
 
 1. **Stability is the dominant constraint for FTCS**: the exact condition
 $4r+\alpha\Delta t\le 2$ limits practical use to coarse spatial grids or very short time intervals, unless accuracy requires small $\Delta t$ independently.
 
-2. **BTCS and CN are unconditionally stable and practically interchangeable in
-stability terms**, but CN achieves second-order accuracy in time at the cost of one extra $O(N_x)$ pass per step — a highly favourable trade-off.
+2. **BTCS and CN are both unconditionally stable for this linear model**, but CN
+achieves second-order accuracy in time at the cost of one extra $O(N_x)$ pass per step.
 
-3. **Numerical experiments confirm the main theoretical orders**: spatial convergence
-is approximately second-order for all schemes, while the temporal tests show first-order behaviour for BTCS and second-order behaviour for CN.
+3. **Numerical experiments are consistent with the main theoretical orders**:
+spatial convergence is approximately second-order for all schemes, while the temporal tests show first-order behaviour for BTCS and second-order behaviour for CN.
 
 4. **The Thomas algorithm** solves the tridiagonal systems in $O(N_x)$ time with
 no pivoting required, making the per-step cost of BTCS and CN comparable to FTCS.
 
-5. **The reaction term $\alpha > 0$ is benign for the implicit systems**: it improves
-diagonal dominance and accelerates amplitude decay. For FTCS it must still be included in the exact stability bound $4r+\alpha\Delta t\le 2$.
+5. **The reaction term $\alpha > 0$ improves diagonal dominance in the implicit
+systems** and accelerates amplitude decay. For FTCS it must still be included in the exact stability bound $4r+\alpha\Delta t\le 2$.
 
-For practical application, **Crank-Nicolson is recommended** as the default scheme: it combines unconditional stability, second-order accuracy, and efficient implementation via the Thomas algorithm, making it the best balance of robustness and efficiency among the three methods considered.
+For the tested one-dimensional linear cases, **Crank-Nicolson is the strongest choice among the three schemes** when a moderate time step is used: it combines unconditional stability, second-order temporal accuracy, and an $O(N_x)$ tridiagonal solve.
 
 ---
 
